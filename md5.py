@@ -80,7 +80,7 @@ class Md5Checker:
         for i in range(16):
             words.append(chunk & 0xffffffff)
             chunk = chunk >> 32
-            words = words.reverse()
+            words.reverse()
         a, b, c, d = self.A, self.B, self.C, self.D
         for i in range(4):
             a = self.FF(a, b, c, d, words[4 * i + 0], self.s[4 * i + 0], self.K[4 * i + 0])
