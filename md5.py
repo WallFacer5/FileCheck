@@ -28,7 +28,7 @@ class Md5Checker:
             self.chunks.append(dup_bytes % (2 ** 512))
             dup_bytes = dup_bytes >> 512
         self.chunks.reverse()
-        print('\n'.join(list(map(lambda i: bin(i)[2:], self.chunks))))
+        print('\n'.join(list(map(lambda chunk: bin(chunk)[2:], self.chunks))))
 
     def padding(self):
         origin_length = (len(bin(self.byte_stream)[2:]) + 7) // 8 * 8
@@ -52,4 +52,25 @@ class Md5Checker:
         return Y ^ (X | (~Z))
 
     def FF(self, a, b, c, d, Mj, s, ti):
-        return 0
+        a += (self.F(b, c, d) & 0xffffffff) + Mj + ti
+        a = ((a & 0xffffffff) << s) | ((a & 0xffffffff) >> (32 - s))
+        a += b
+        return a & 0xffffffff
+
+    def GG(self, a, b, c, d, Mj, s, ti):
+        a += (self.G(b, c, d) & 0xffffffff) + Mj + ti
+        a = ((a & 0xffffffff) << s) | ((a & 0xffffffff) >> (32 - s))
+        a += b
+        return a & 0xffffffff
+
+    def HH(self, a, b, c, d, Mj, s, ti):
+        a += (self.H(b, c, d) & 0xffffffff) + Mj + ti
+        a = ((a & 0xffffffff) << s) | ((a & 0xffffffff) >> (32 - s))
+        a += b
+        return a & 0xffffffff
+
+    def II(self, a, b, c, d, Mj, s, ti):
+        a += (self.I(b, c, d) & 0xffffffff) + Mj + ti
+        a = ((a & 0xffffffff) << s) | ((a & 0xffffffff) >> (32 - s))
+        a += b
+        return a & 0xffffffff
