@@ -16,7 +16,7 @@ class Md5Checker:
         ]
         self.K = []
         for i in range(64):
-            self.K.append(math.floor(2**32 * abs(math.sin(i + 1))))
+            self.K.append(math.floor(2 ** 32 * abs(math.sin(i + 1))))
         self.padding()
         print(bin(self.byte_stream))
         print(hex(self.byte_stream))
@@ -74,3 +74,31 @@ class Md5Checker:
         a = ((a & 0xffffffff) << s) | ((a & 0xffffffff) >> (32 - s))
         a += b
         return a & 0xffffffff
+
+    def single_chunk_process(self, chunk):
+        words = []
+        for i in range(16):
+            words.append(chunk & 0xffffffff)
+            chunk = chunk >> 32
+            words = words.reverse()
+        a, b, c, d = self.A, self.B, self.C, self.D
+        for i in range(4):
+            a = self.FF(a, b, c, d, words[4 * i + 0], self.s[4 * i + 0], self.K[4 * i + 0])
+            b = self.FF(d, a, b, c, words[4 * i + 1], self.s[4 * i + 1], self.K[4 * i + 1])
+            c = self.FF(c, d, a, b, words[4 * i + 2], self.s[4 * i + 2], self.K[4 * i + 2])
+            d = self.FF(b, c, d, a, words[4 * i + 3], self.s[4 * i + 3], self.K[4 * i + 3])
+        for i in range(4):
+            a = self.GG(a, b, c, d, words[4 * i + 0], self.s[4 * i + 0], self.K[4 * i + 0])
+            b = self.GG(d, a, b, c, words[4 * i + 1], self.s[4 * i + 1], self.K[4 * i + 1])
+            c = self.GG(c, d, a, b, words[4 * i + 2], self.s[4 * i + 2], self.K[4 * i + 2])
+            d = self.GG(b, c, d, a, words[4 * i + 3], self.s[4 * i + 3], self.K[4 * i + 3])
+        for i in range(4):
+            a = self.HH(a, b, c, d, words[4 * i + 0], self.s[4 * i + 0], self.K[4 * i + 0])
+            b = self.HH(d, a, b, c, words[4 * i + 1], self.s[4 * i + 1], self.K[4 * i + 1])
+            c = self.HH(c, d, a, b, words[4 * i + 2], self.s[4 * i + 2], self.K[4 * i + 2])
+            d = self.HH(b, c, d, a, words[4 * i + 3], self.s[4 * i + 3], self.K[4 * i + 3])
+        for i in range(4):
+            a = self.II(a, b, c, d, words[4 * i + 0], self.s[4 * i + 0], self.K[4 * i + 0])
+            b = self.II(d, a, b, c, words[4 * i + 1], self.s[4 * i + 1], self.K[4 * i + 1])
+            c = self.II(c, d, a, b, words[4 * i + 2], self.s[4 * i + 2], self.K[4 * i + 2])
+            d = self.II(b, c, d, a, words[4 * i + 3], self.s[4 * i + 3], self.K[4 * i + 3])
