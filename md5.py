@@ -41,7 +41,9 @@ class Md5Checker:
         self.byte_stream = self.byte_stream << 8
         self.byte_stream += 0x80
         cur_length = origin_length + 8
-        padding_length = 512 - 64 - cur_length % (512 - 64)
+        padding_length = 512 - 64 - cur_length % 512
+        if padding_length < 0:
+            padding_length += 512
         self.byte_stream = self.byte_stream << padding_length
         self.byte_stream = (self.byte_stream << 64) + origin_length % (2 ** 64)
 
@@ -105,17 +107,18 @@ class Md5Checker:
         four_bytes.reverse()
         return eval('0x' + ''.join(four_bytes))
 
-    def single_chunk_process(self, chunk):
+    def single_chunk_process(self, chunk, is_last):
         words = []
         for i in range(16):
             words.append(self.reverse4bytes(chunk & 0xffffffff))
             chunk = chunk >> 32
         words.reverse()
-        tmp = words[-1]
-        words[-1] = words[-2]
-        words[-2] = tmp
-        words[-1] = self.reverse4bytes(words[-1])
-        words[-2] = self.reverse4bytes(words[-2])
+        if is_last:
+            tmp = words[-1]
+            words[-1] = words[-2]
+            words[-2] = tmp
+            words[-1] = self.reverse4bytes(words[-1])
+            words[-2] = self.reverse4bytes(words[-2])
         # print('\n'.join(['words'] + list(map(lambda word: bin(word)[2:], words))))
         a, b, c, d = self.A, self.B, self.C, self.D
         # print('abcd:', hex(a), hex(b), hex(c), hex(d))
@@ -183,13 +186,18 @@ class Md5Checker:
         print('abcd:', hex(self.A), hex(self.B), hex(self.C), hex(self.D))
 
     def hashing(self):
-        for chunk in self.chunks:
-            self.single_chunk_process(chunk)
-        self.A = self.reverse4bytes(self.A)
-        self.B = self.reverse4bytes(self.B)
-        self.C = self.reverse4bytes(self.C)
-        self.D = self.reverse4bytes(self.D)
-        self.md5_result = hex(self.A)[2:] + hex(self.B)[2:] + hex(self.C)[2:] + hex(self.D)[2:]
+        for chunk in self.chunks[:-1]:
+            self.single_chunk_process(chunk, False)
+        self.single_chunk_process(self.chunks[-1], True)
+        self.A = hex(self.reverse4bytes(self.A))[2:]
+        self.B = hex(self.reverse4bytes(self.B))[2:]
+        self.C = hex(self.reverse4bytes(self.C))[2:]
+        self.D = hex(self.reverse4bytes(self.D))[2:]
+        self.A = '0' * (8 - len(self.A)) + self.A
+        self.B = '0' * (8 - len(self.B)) + self.B
+        self.C = '0' * (8 - len(self.C)) + self.C
+        self.D = '0' * (8 - len(self.D)) + self.D
+        self.md5_result = self.A + self.B + self.C + self.D
 
     def get_hash(self):
         if self.md5_result is None:
