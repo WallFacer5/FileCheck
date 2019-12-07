@@ -1,5 +1,6 @@
 from md5 import Md5Checker
 from sha3 import Sha3Checker
+import tkinter as tk
 
 class Checker:
     def __init__(self, msg, algo):
@@ -21,8 +22,111 @@ class Checker:
         return self.checker.get_hash()
 
 
-if __name__ == '__main__':
+def main():
     msg = input('Please input the msg: ')
     hash_func = input('Please input the hash function you want to use(md5, sha3): ')
     checker = Checker(msg, hash_func)
     print(hash_func, 'hash of', msg, 'is', checker.get_hash())
+
+
+class Application(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.pack()
+        self.choose_input()
+
+    def choose_input(self):
+        self.radio_buttons = tk.Frame(self)
+        self.choose_v = tk.IntVar()
+        self.string_rb = tk.Radiobutton(self.radio_buttons, variable=self.choose_v, text='String Input', value=0)
+        self.file_rb = tk.Radiobutton(self.radio_buttons, variable=self.choose_v, text='File Input', value=1)
+        self.string_rb.grid(row=0, column=0, sticky=tk.W)
+        self.file_rb.grid(row=1, column=0, sticky=tk.W)
+        self.radio_buttons.pack()
+
+        self.choose_button = tk.Button(self, text='Choose', command=self.choose_jump)
+        self.choose_button.pack()
+
+    def choose_jump(self):
+        self.radio_buttons.destroy()
+        self.choose_button.destroy()
+        print(self.choose_v.get())
+        if self.choose_v.get() == 0:
+            self.jump_string()
+        elif self.choose_v.get() == 1:
+            self.jump_file()
+
+    def jump_string(self):
+        self.string_frame = tk.Frame(self)
+        self.string_label = tk.Label(self.string_frame, text='Input string')
+        self.string_input = tk.Entry(self.string_frame, width=39)
+        self.string_label.grid(row=0, column=0, sticky=tk.W)
+        self.string_input.grid(row=0, column=1, columnspan=2, sticky=tk.W)
+
+        self.hash_func = tk.IntVar()
+
+        self.hash_label = tk.Label(self.string_frame, text='Hash Function')
+        self.md5_rb = tk.Radiobutton(self.string_frame, variable=self.hash_func, text='md5', value=0)
+        self.sha3_rb = tk.Radiobutton(self.string_frame, variable=self.hash_func, text='sha3', value=1)
+        self.hash_label.grid(row=1, column=0, sticky=tk.W)
+        self.md5_rb.grid(row=1, column=1, sticky=tk.W)
+        self.sha3_rb.grid(row=1, column=2, sticky=tk.W)
+
+        self.string_button = tk.Button(self.string_frame, text='Hash!', command=self.do_hash)
+        self.string_button.grid(row=2, columnspan=3)
+
+        self.hash_out_label = tk.Label(self.string_frame, text='Hash Result')
+        self.hash_out_text = tk.Text(self.string_frame, height=1, width=50)
+        self.hash_out_text.config(highlightbackground='#80C0FF', state=tk.DISABLED)
+        self.hash_out_label.grid(row=3, column=0)
+        self.hash_out_text.grid(row=3, column=1, columnspan=2)
+        self.string_frame.pack()
+
+    def do_hash(self):
+        msg = self.string_input.get()
+        print(msg)
+        hash_func = self.hash_func.get()
+        if hash_func == 0:
+            hash_func = 'md5'
+        else:
+            hash_func = 'sha3'
+        print(hash_func)
+        checker = Checker(msg, hash_func)
+        print(hash_func, 'hash of', msg, 'is', checker.get_hash())
+
+        self.hash_out_text.config(state=tk.NORMAL)
+        self.hash_out_text.delete(0.0, tk.END)
+        self.hash_out_text.insert(tk.END, checker.get_hash())
+        self.hash_out_text.config(state=tk.DISABLED)
+
+    def jump_file(self):
+        self.file_frame = tk.Frame(self)
+        self.file_input = tk.Entry(self.file_frame)
+        self.file_input.pack()
+        self.file_frame.pack()
+
+    def say_hi(self):
+        print("hi there, everyone!")
+
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = Application(master=root)
+    app.mainloop()
+    '''
+    root = Tk()
+
+    string_input = Entry(root)
+    string_input.pack()
+    f1 = Frame(root)
+
+    a1 = Radiobutton(f1, text="one", value=1)
+    a2 = Radiobutton(f1, text="two", value=2)
+    a3 = Radiobutton(f1, text="three", value=3)
+    a1.grid(row=0, column=0)
+    a2.grid(row=0, column=1)
+    a3.grid(row=0, column=2)
+    f1.pack()
+    root.mainloop()
+    '''
