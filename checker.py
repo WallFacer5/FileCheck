@@ -1,5 +1,5 @@
 from md5 import Md5Checker
-
+from sha3 import Sha3Checker
 
 class Checker:
     def __init__(self, msg, algo):
@@ -14,6 +14,8 @@ class Checker:
         print()
         if algo == 'md5':
             self.checker = Md5Checker(self.byte_stream)
+        elif algo == 'sha3':
+            self.checker = Sha3Checker(self.byte_stream)
 
     def get_hash(self):
         return self.checker.get_hash()
