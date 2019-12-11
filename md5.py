@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Yanhan Zhang
+@Due_date: Dec. 12th, 2019
+"""
+
 import math
 
 

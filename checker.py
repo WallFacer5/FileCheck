@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Yanhan Zhang
+@Due_date: Dec. 12th, 2019
+"""
+
 from md5 import Md5Checker
 from sha3 import Sha3Checker
 import tkinter as tk
