@@ -23,22 +23,23 @@ constant = AttrDict({
 
 class Sha3Checker:
     """docstring for Sha3Checker"""
-    def __init__(self, input):
+    def __init__(self, input, is_file):
         super(Sha3Checker, self).__init__()
+        self.hash_value = None
         
         if not len(sys.argv) > 1:
             sys.argv.append(input)
 
     # Consider using mmap here
-        if path.isfile(sys.argv[1]):
+        if is_file:
             self.input_string = bitstring.BitArray(open(sys.argv[1], "rb").read())
         else:
             self.input_string = bitstring.BitArray(bin(int(
                 ''.join(format(ord(x), 'b') for x in sys.argv[1]), base=2
             )))
         
-    def get_hash(self):
-        
+    def do_hash(self):
+        print('do hash of', self.input_string)
         pad_input(self.input_string)
         padded_input = self.input_string
         padded_input_list = []
@@ -61,9 +62,14 @@ class Sha3Checker:
         while input_hash.len < 256:
             input_hash.append(state[0:constant.BIT_RATE])
             state = block_permutation(state)
-        del(input_hash[256:])
+        return input_hash.hex[:256]
 
-        return input_hash
+    def get_hash(self):
+        if self.hash_value == None:
+            self.hash_value = self.do_hash()
+            return self.hash_value
+        else:
+            return self.hash_value
 
 
 def pad_input(string_to_pad):

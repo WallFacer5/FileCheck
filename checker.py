@@ -8,6 +8,7 @@ import bitstring
 class Checker:
     def __init__(self, msg, algo, is_file=False):
         if is_file:
+            origin_msg = msg
             msg = bitstring.BitArray(open(msg, 'rb').read()).int
             self.byte_stream = msg
             print('Msg:')
@@ -17,11 +18,13 @@ class Checker:
             if algo == 'md5':
                 self.checker = Md5Checker(self.byte_stream)
             elif algo == 'sha3':
-                self.checker = Sha3Checker(self.byte_stream)
+                self.checker = Sha3Checker(origin_msg, True)
         else:
             if msg == '':
+                origin_msg = ''
                 msg = 0
             else:
+                origin_msg = msg
                 msg = eval('0x' + bytes(msg.encode()).hex())
             self.byte_stream = msg
             print('Msg:')
@@ -31,7 +34,7 @@ class Checker:
             if algo == 'md5':
                 self.checker = Md5Checker(self.byte_stream)
             elif algo == 'sha3':
-                self.checker = Sha3Checker(self.byte_stream)
+                self.checker = Sha3Checker(origin_msg, False)
 
     def get_hash(self):
         return self.checker.get_hash()
@@ -120,7 +123,7 @@ class Application(tk.Frame):
         self.string_button.grid(row=2, columnspan=3)
 
         self.hash_out_label = tk.Label(self.string_frame, text='Hash Result')
-        self.hash_out_text = tk.Text(self.string_frame, height=1, width=50)
+        self.hash_out_text = tk.Text(self.string_frame, height=6, width=50)
         self.hash_out_text.config(highlightbackground='#80C0FF', state=tk.DISABLED)
         self.hash_out_label.grid(row=3, column=0)
         self.hash_out_text.grid(row=3, column=1, columnspan=2)
@@ -139,7 +142,7 @@ class Application(tk.Frame):
         else:
             hash_func = 'sha3'
         print(hash_func)
-        checker = Checker(msg, hash_func)
+        checker = Checker(msg, hash_func, is_file=False)
         print(hash_func, 'hash of', msg, 'is', checker.get_hash())
 
         self.hash_out_text.config(state=tk.NORMAL)
@@ -181,7 +184,7 @@ class Application(tk.Frame):
         self.file_button.grid(row=2, columnspan=3)
 
         self.hash_out_label = tk.Label(self.file_frame, text='Hash Result')
-        self.hash_out_text = tk.Text(self.file_frame, height=1, width=87)
+        self.hash_out_text = tk.Text(self.file_frame, height=3, width=87)
         self.hash_out_text.config(highlightbackground='#80C0FF', state=tk.DISABLED)
         self.hash_out_label.grid(row=3, column=0)
         self.hash_out_text.grid(row=3, column=1, columnspan=2)
@@ -212,7 +215,7 @@ class Application(tk.Frame):
         self.hash_out_text.delete(0.0, tk.END)
         try:
             file_path = self.file_input.get()
-            print(file_path)
+            print('File path:', file_path)
             try_f = open(file_path, 'r')
             try_f.close()
             hash_func = self.hash_func.get()
@@ -261,13 +264,13 @@ class Application(tk.Frame):
         self.string_button.grid(row=3, columnspan=3)
 
         self.hash_out_label1 = tk.Label(self.strcmp_frame, text='Hash Result1')
-        self.hash_out_text1 = tk.Text(self.strcmp_frame, height=1, width=50)
+        self.hash_out_text1 = tk.Text(self.strcmp_frame, height=5, width=50)
         self.hash_out_text1.config(highlightbackground='#80C0FF', state=tk.DISABLED)
         self.hash_out_label1.grid(row=4, column=0)
         self.hash_out_text1.grid(row=4, column=1, columnspan=2)
 
         self.hash_out_label2 = tk.Label(self.strcmp_frame, text='Hash Result2')
-        self.hash_out_text2 = tk.Text(self.strcmp_frame, height=1, width=50)
+        self.hash_out_text2 = tk.Text(self.strcmp_frame, height=5, width=50)
         self.hash_out_text2.config(highlightbackground='#80C0FF', state=tk.DISABLED)
         self.hash_out_label2.grid(row=5, column=0)
         self.hash_out_text2.grid(row=5, column=1, columnspan=2)
@@ -291,8 +294,8 @@ class Application(tk.Frame):
         else:
             hash_func = 'sha3'
         print(hash_func)
-        checker1 = Checker(msg1, hash_func)
-        checker2 = Checker(msg2, hash_func)
+        checker1 = Checker(msg1, hash_func, is_file=False)
+        checker2 = Checker(msg2, hash_func, is_file=False)
         print(hash_func, 'hash of', msg1, 'is', checker1.get_hash())
         print(hash_func, 'hash of', msg2, 'is', checker2.get_hash())
 
@@ -366,13 +369,13 @@ class Application(tk.Frame):
         self.file_button.grid(row=3, columnspan=3)
 
         self.hash_out_label1 = tk.Label(self.filecmp_frame, text='Hash Result')
-        self.hash_out_text1 = tk.Text(self.filecmp_frame, height=1, width=87)
+        self.hash_out_text1 = tk.Text(self.filecmp_frame, height=3, width=87)
         self.hash_out_text1.config(highlightbackground='#80C0FF', state=tk.DISABLED)
         self.hash_out_label1.grid(row=4, column=0)
         self.hash_out_text1.grid(row=4, column=1, columnspan=2)
 
         self.hash_out_label2 = tk.Label(self.filecmp_frame, text='Hash Result')
-        self.hash_out_text2 = tk.Text(self.filecmp_frame, height=1, width=87)
+        self.hash_out_text2 = tk.Text(self.filecmp_frame, height=3, width=87)
         self.hash_out_text2.config(highlightbackground='#80C0FF', state=tk.DISABLED)
         self.hash_out_label2.grid(row=5, column=0)
         self.hash_out_text2.grid(row=5, column=1, columnspan=2)
