@@ -4,6 +4,7 @@ import tkinter as tk
 import tkinter.filedialog as fd
 import bitstring
 
+
 class Checker:
     def __init__(self, msg, algo, is_file=False):
         if is_file:
@@ -49,7 +50,6 @@ class Application(tk.Frame):
         self.master = master
         self.pack()
         self.choose_input()
-        self.file_path = tk.StringVar(value='')
 
     def choose_input(self):
         self.radio_buttons = tk.Frame(self)
@@ -119,9 +119,9 @@ class Application(tk.Frame):
         file_want = fd.askopenfile()
         file_path = file_want.name
         print(file_path)
+        self.file_input.delete(0, tk.END)
         self.file_input.insert(tk.END, file_path)
         file_want.close()
-        self.file_path.set(file_path)
         self.file_input.config(text=file_path)
 
     def jump_file(self):
@@ -156,26 +156,44 @@ class Application(tk.Frame):
         self.hash_out_text.grid(row=3, column=1, columnspan=2)
         self.file_frame.pack()
 
+    def warning_process(self):
+        self.warning_window.destroy()
+        self.file_input.delete(0, tk.END)
+
     def do_file_hash(self):
-        if self.file_path.get() == '':
+        try:
+            self.warning_window.destroy()
+        except Exception:
             pass
-        else:
+        self.hash_out_text.delete(0.0, tk.END)
+        self.hash_out_text.config(state=tk.NORMAL)
+        try:
+            file_path = self.file_input.get()
+            print(file_path)
+            try_f = open(file_path, 'r')
+            try_f.close()
             hash_func = self.hash_func.get()
             if hash_func == 0:
                 hash_func = 'md5'
             else:
                 hash_func = 'sha3'
             print(hash_func)
-            checker = Checker(self.file_path.get(), hash_func, is_file=True)
-            print(hash_func, 'hash of', self.file_path.get(), 'is', checker.get_hash())
-
-            self.hash_out_text.config(state=tk.NORMAL)
-            self.hash_out_text.delete(0.0, tk.END)
+            checker = Checker(file_path, hash_func, is_file=True)
+            print(hash_func, 'hash of', file_path, 'is', checker.get_hash())
             self.hash_out_text.insert(tk.END, checker.get_hash())
+        except Exception:
+            print('No such file!')
+            self.warning_window = tk.Frame(self)
+            self.warning_msg = tk.Label(self.warning_window, fg='red', text='No such file!\nPlease re-input your file path!')
+            self.warning_btn = tk.Button(self.warning_window, text='Understand', command=self.warning_process)
+            self.warning_msg.pack()
+            self.warning_btn.pack()
+            self.warning_window.pack()
             self.hash_out_text.config(state=tk.DISABLED)
 
-    def say_hi(self):
-        print("hi there, everyone!")
+
+def say_hi(self):
+    print("hi there, everyone!")
 
 
 if __name__ == '__main__':
