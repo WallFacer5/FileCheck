@@ -58,10 +58,10 @@ class Sha3Checker:
             state = block_permutation(state)
 
         input_hash = bitstring.BitArray()
-        while input_hash.len < 256:
+        while input_hash.len < 64:
             input_hash.append(state[0:constant.BIT_RATE])
             state = block_permutation(state)
-        return input_hash.hex[:256]
+        return input_hash.hex[:64]
 
     def get_hash(self):
         if self.hash_value is None:

@@ -129,7 +129,7 @@ class Application(tk.Frame):
         self.string_button.grid(row=2, columnspan=3)
 
         self.hash_out_label = tk.Label(self.string_frame, text='Hash Result')
-        self.hash_out_text = tk.Text(self.string_frame, height=6, width=50)
+        self.hash_out_text = tk.Text(self.string_frame, height=2, width=50)
         self.hash_out_text.config(highlightbackground='#80C0FF', state=tk.DISABLED)
         self.hash_out_label.grid(row=3, column=0)
         self.hash_out_text.grid(row=3, column=1, columnspan=2)
