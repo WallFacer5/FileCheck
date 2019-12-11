@@ -21,13 +21,24 @@ constant = AttrDict({
     'CAPACITY':512
 })
 
-class Sha3_code(object):
+class Sha3Checker:
     """docstring for Sha3Checker"""
     def __init__(self, input):
-        super(Sha3_code, self).__init__()
-        self.input_string = input
+        super(Sha3Checker, self).__init__()
+        
+        if not len(sys.argv) > 1:
+            sys.argv.append(input)
+
+    # Consider using mmap here
+        if path.isfile(sys.argv[1]):
+            self.input_string = bitstring.BitArray(open(sys.argv[1], "rb").read())
+        else:
+            self.input_string = bitstring.BitArray(bin(int(
+                ''.join(format(ord(x), 'b') for x in sys.argv[1]), base=2
+            )))
         
     def get_hash(self):
+        
         pad_input(self.input_string)
         padded_input = self.input_string
         padded_input_list = []
@@ -160,41 +171,3 @@ def round_constant_generation(t):
         R[6] = R[6] ^ R[8]
         del(R[8:])
     return R[0]
-
-
-def Sha3Checker(input):
-
-    # USE THIS WHEN READY TO DEPLOY
-    #    parser = argparse.ArgumentParser(
-    #        description='Compute the SHA3-256 hash of an input.')
-    #    parser.add_argument('input', metavar='input', type=str,
-    #                        help='A relative or absolute filepath, a filename'
-    #                             'in the current directory, or a string value')
-    #    cline_args = parser.parse_args()
-    #
-    #    if not cline_args and not function_arg:
-    #        arg = "A"
-    #
-    #    input_hash = compute_sha3(input_string)
-    #    print("This is the hash of the given string or filename: %s" % input_hash)
-
-    # USE THIS WHILE WRITING IN IDE
-
-    if not len(sys.argv) > 1:
-        sys.argv.append(input)
-
-    # Consider using mmap here
-    if path.isfile(sys.argv[1]):
-        input_string = bitstring.BitArray(open(sys.argv[1], "rb").read())
-    else:
-        input_string = bitstring.BitArray(bin(int(
-            ''.join(format(ord(x), 'b') for x in sys.argv[1]), base=2
-        )))
-
-    checker = Sha3_code(input_string)
-    input_hash = checker.get_hash()
-    print("This is the hash of the given string or filename: %s" % input_hash)
-    #return input_hash
-
-# hash of "A" 1c9ebd6caf02840a5b2b7f0fc870ec1db154886ae9fe621b822b14fd0bf513d6
-Sha3Checker("Ab")
