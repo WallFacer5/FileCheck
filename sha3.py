@@ -1,15 +1,15 @@
-# sha3.py
-# Dylan and Keegan Palmieri
-# SHA3-256 implementation
-# CS301 Fall 2019
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Dec 11 01:23:55 2019
 
+@author: Weizhi Wang
+"""
 
 # import argparse  # Use with CLI method of input
 import sys  # Use with debugging/writing input
 from os import path
 import bitstring
 from copy import deepcopy
-import constant
 
 from attrdict import AttrDict
 
@@ -21,10 +21,10 @@ constant = AttrDict({
     'CAPACITY':512
 })
 
-class Sha3Checker(object):
+class Sha3_code(object):
     """docstring for Sha3Checker"""
     def __init__(self, input):
-        super(Sha3Checker, self).__init__()
+        super(Sha3_code, self).__init__()
         self.input_string = input
         
     def get_hash(self):
@@ -162,7 +162,7 @@ def round_constant_generation(t):
     return R[0]
 
 
-def main():
+def Sha3Checker(input):
 
     # USE THIS WHEN READY TO DEPLOY
     #    parser = argparse.ArgumentParser(
@@ -181,7 +181,7 @@ def main():
     # USE THIS WHILE WRITING IN IDE
 
     if not len(sys.argv) > 1:
-        sys.argv.append('A')
+        sys.argv.append(input)
 
     # Consider using mmap here
     if path.isfile(sys.argv[1]):
@@ -191,10 +191,10 @@ def main():
             ''.join(format(ord(x), 'b') for x in sys.argv[1]), base=2
         )))
 
-    checker = Sha3Checker(input_string)
+    checker = Sha3_code(input_string)
     input_hash = checker.get_hash()
     print("This is the hash of the given string or filename: %s" % input_hash)
-
+    #return input_hash
 
 # hash of "A" 1c9ebd6caf02840a5b2b7f0fc870ec1db154886ae9fe621b822b14fd0bf513d6
-#main()
+Sha3Checker("Ab")
