@@ -462,7 +462,7 @@ class Application(tk.Frame):
         if checker1.get_hash() == checker2.get_hash():
             self.match_result.config(text='Match!')
         else:
-            self.match_result.config(text='Not the same string!')
+            self.match_result.config(text='Not the same file!')
 
 
 if __name__ == '__main__':
