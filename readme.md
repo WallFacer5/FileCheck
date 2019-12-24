@@ -9,3 +9,6 @@
     + File Compare: by selecting this option you can compute and compare the hash values of two files(the value would be the same while the files are equal and would be different while the files are not same in most of the cases);
 + ## Helping on MD5
     Our application is not only an application which can let you compute the hash values of strings and files but also an application which can let you know completely of the two hash functions, especially md5. Thus, while you do md5 hashing each time, there will be not only outputs in the UI, but also outputs with exhaustive steps of the processes in each round of the computation of md5 hashing. Hope you can get some help while you are facing some difficult bug in your implementation of md5 function.
++ ## Copyright (c)
+    Copyright (c) 2019 WallFacer5
+    This application was built by Yanhan Zhang, Weizhi Wang and Yuange Li from Rutgers University.
