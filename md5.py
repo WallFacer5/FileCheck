@@ -25,7 +25,7 @@ class Md5Checker:
         for i in range(64):
             self.K.append(math.floor(2 ** 32 * abs(math.sin(i + 1))))
         self.padding()
-        print('Bytes after padding:')
+        print('Bytes after padding(pay attention to the higher and lower bytes direction in each 32 bits):')
         print(bin(self.byte_stream))
         print(hex(self.byte_stream))
         print()
@@ -125,9 +125,9 @@ class Md5Checker:
             words[-2] = tmp
             words[-1] = self.reverse4bytes(words[-1])
             words[-2] = self.reverse4bytes(words[-2])
-        # print('\n'.join(['words'] + list(map(lambda word: bin(word)[2:], words))))
+        print('\n'.join(['words'] + list(map(lambda word: bin(word)[2:], words))))
         a, b, c, d = self.A, self.B, self.C, self.D
-        # print('abcd:', hex(a), hex(b), hex(c), hex(d))
+        print('abcd:', hex(a), hex(b), hex(c), hex(d))
         for i in range(4):
             a = self.FF(a, b, c, d, words[4 * i + 0], self.s[4 * i + 0], self.K[4 * i + 0])
             d = self.FF(d, a, b, c, words[4 * i + 1], self.s[4 * i + 1], self.K[4 * i + 1])
@@ -192,8 +192,12 @@ class Md5Checker:
         print('abcd:', hex(self.A), hex(self.B), hex(self.C), hex(self.D))
 
     def hashing(self):
+        i = 0
         for chunk in self.chunks[:-1]:
+            print('Chunk %d:' % i)
             self.single_chunk_process(chunk, False)
+            i += 1
+        print('Chunk %d:' % i)
         self.single_chunk_process(self.chunks[-1], True)
         self.A = hex(self.reverse4bytes(self.A))[2:]
         self.B = hex(self.reverse4bytes(self.B))[2:]
